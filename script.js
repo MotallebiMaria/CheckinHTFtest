@@ -16,7 +16,7 @@ function checkEmail() {
         fetch("https://script.google.com/macros/s/AKfycbw4jBMXL5QjHO5ncObeZPLGsClwGAjtmTO-wVURCPVSNaVmIg3c5A7QKyX3texvaqrK/exec", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email: emailInput})
+            body: JSON.stringify({Attendee_email: emailInput})
         })
             .then(response => response.json())  // Ensure response is parsed as JSON
             .then(data => console.log("Response from server:", data))
