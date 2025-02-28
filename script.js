@@ -13,12 +13,12 @@ function checkEmail() {
         result.style.color = "green";
 
         // Send verified email to Google Sheets
-        fetch("https://script.google.com/macros/s/AKfycbw4jBMXL5QjHO5ncObeZPLGsClwGAjtmTO-wVURCPVSNaVmIg3c5A7QKyX3texvaqrK/exec", {
+        fetch("YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({Attendee_email: emailInput})
+            body: JSON.stringify({email: emailInput})
         })
-            .then(response => response.json())  // Ensure response is parsed as JSON
+            .then(response => response.text())  // Read response as text instead of JSON
             .then(data => console.log("Response from server:", data))
             .catch(error => console.error("Fetch error:", error));
     }
