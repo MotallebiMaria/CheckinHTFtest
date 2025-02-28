@@ -13,7 +13,7 @@ function checkEmail() {
         result.style.color = "green";
 
         // Send verified email to Google Sheets
-        fetch("https://script.google.com/macros/s/AKfycbxVAKV49iuoeN64Is2dv-lXXxm6DGGb-GIn5SXwZgLVz4XYgdVfx4tG-FlSMSL3GWUC/exec", {
+        fetch("https://script.google.com/macros/s/AKfycbwr0xLGjLLE3w4zGvhrEBQR9kB5ZZ4iziFFkyziqsf-JUZj9zx9IoMFq0Mt9A7rljwc/exec", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({email: emailInput})
