@@ -13,13 +13,13 @@ function checkEmail() {
         result.style.color = "green";
 
         // Send verified email to Google Sheets
-        fetch("https://script.google.com/macros/s/AKfycbzfZJGM0ysNSdrR-Y7skSD4qc0LZw-DZHaJzd4Tt1aR94InysjB044YAtkVqZR6o220/execL", {
+        fetch("https://script.google.com/macros/s/AKfycbw4jBMXL5QjHO5ncObeZPLGsClwGAjtmTO-wVURCPVSNaVmIg3c5A7QKyX3texvaqrK/exec", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ Attendee_email: emailInput })
-        }).then(response => console.log("Email stored"));
-    } else {
-        result.textContent = "❌ Not Verified";
-        result.style.color = "red";
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email: emailInput})
+        })
+            .then(response => response.json())  // Ensure response is parsed as JSON
+            .then(data => console.log("Response from server:", data))
+            .catch(error => console.error("Fetch error:", error));
     }
 }
