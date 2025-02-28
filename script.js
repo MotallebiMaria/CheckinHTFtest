@@ -16,7 +16,7 @@ function checkEmail() {
         fetch("https://script.google.com/macros/s/AKfycbzfZJGM0ysNSdrR-Y7skSD4qc0LZw-DZHaJzd4Tt1aR94InysjB044YAtkVqZR6o220/execL", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: emailInput })
+            body: JSON.stringify({ Attendee_email: emailInput })
         }).then(response => console.log("Email stored"));
     } else {
         result.textContent = "❌ Not Verified";
