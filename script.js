@@ -1,25 +1,80 @@
-const verifiedEmails = [
-    "user1@example.com",
-    "user2@example.com",
-    "user3@example.com"
-];
+async function fetchRegisteredEmails() {
+    try {
+        const response = await fetch("http://localhost:3000/getRegisteredEmails");
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data = await response.json();
+        return data.registeredEmails;
+    } catch (error) {
+        console.error("Error fetching registered emails:", error);
+        return [];
+    }
+}
 
-function checkEmail() {
+async function markCheckedInEmail(email) {
+    try {
+        const response = await fetch("http://localhost:3000/markCheckedInEmail", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log("Email marked as checked-in");
+        } else {
+            console.error("Failed to mark email:", data.error);
+        }
+    } catch (error) {
+        console.error("Error marking email:", error);
+    }
+}
+
+async function checkEmail() {
     const emailInput = document.getElementById("emailInput").value.trim();
     const result = document.getElementById("result");
 
-    if (verifiedEmails.includes(emailInput)) {
-        result.textContent = "✅ Verified Attendee";
-        result.style.color = "green";
+    if (!emailInput) {
+        result.textContent = "⚠️ Please enter your email";
+        result.style.color = "orange";
+        return;
+    }
 
-        // Send verified email to Google Sheets
-        fetch("https://script.google.com/macros/s/AKfycbwr0xLGjLLE3w4zGvhrEBQR9kB5ZZ4iziFFkyziqsf-JUZj9zx9IoMFq0Mt9A7rljwc/exec", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email: emailInput})
-        })
-            .then(response => response.text())  // Read response as text instead of JSON
-            .then(data => console.log("Response from server:", data))
-            .catch(error => console.error("Fetch error:", error));
+    try {
+        const registeredEmails = await fetchRegisteredEmails();
+        console.log("Got registered emails:", registeredEmails);
+
+        if (registeredEmails.includes(emailInput.toLowerCase())) {
+            // call backend
+            const response = await fetch("http://localhost:3000/markCheckedInEmail", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: emailInput.toLowerCase() }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                result.textContent = "✅ Check-in successful!";
+                result.style.color = "green";
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                result.textContent = "⚠️ You have already checked in.";
+                result.style.color = "orange";
+            }
+        } else {
+            result.textContent = "❌ Not Registered";
+            result.style.color = "red";
+        }
+    } catch (error) {
+        console.error("Error checking email:", error);
+        result.textContent = "⚠️ An error occurred. Please try again.";
+        result.style.color = "orange";
     }
 }
