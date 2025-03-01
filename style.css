@@ -66,7 +66,7 @@ input {
 
 button {
     padding: 10px 15px;
-    background: linear-gradient(90deg, #4285f4, #EA4335);
+    background: linear-gradient(90deg, #6699FF, #9966CC);
     color: white;
     border: none;
     cursor: pointer;
@@ -75,7 +75,7 @@ button {
 }
 
 button:hover {
-    background: linear-gradient(90deg, #34A853, #FBBC05);
+    background: linear-gradient(90deg, #6699FF, #9966CC);
 }
 
 #result {

@@ -1,4 +1,3 @@
-// Predefined list of verified attendee emails
 const verifiedEmails = [
     "user1@example.com",
     "user2@example.com",
@@ -12,8 +11,15 @@ function checkEmail() {
     if (verifiedEmails.includes(emailInput)) {
         result.textContent = "✅ Verified Attendee";
         result.style.color = "green";
-    } else {
-        result.textContent = "❌ Not Verified";
-        result.style.color = "red";
+
+        // Send verified email to Google Sheets
+        fetch("https://script.google.com/macros/s/AKfycbwr0xLGjLLE3w4zGvhrEBQR9kB5ZZ4iziFFkyziqsf-JUZj9zx9IoMFq0Mt9A7rljwc/exec", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email: emailInput})
+        })
+            .then(response => response.text())  // Read response as text instead of JSON
+            .then(data => console.log("Response from server:", data))
+            .catch(error => console.error("Fetch error:", error));
     }
 }
