@@ -4,12 +4,13 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #000; /* Dark background */
+    background: url('C:\Users\justi\PycharmProjects\CheckinHTF\image.png'); /* Background Image */
+    background-size: cover; /* Ensure it covers the whole screen */
     color: white;
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.1); /* Slight transparency */
+    background: rgba(0, 0, 0, 0.7); /* Darker transparency to improve readability */
     padding: 20px;
     box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
     border-radius: 8px;
