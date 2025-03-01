@@ -19,7 +19,7 @@ body {
 
 h2 {
     font-size: 2rem;
-    background: linear-gradient(90deg, #4285F4, #34A853, #FBBC05, #EA4335);
+    background: linear-gradient(90deg, #6699FF, #9966CC, #FF6699);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -36,7 +36,7 @@ input {
 
 button {
     padding: 10px 15px;
-    background: linear-gradient(90deg, #4285F4, #EA4335);
+    background: linear-gradient(90deg, #6699FF, #9966CC);
     color: white;
     border: none;
     cursor: pointer;
@@ -45,7 +45,7 @@ button {
 }
 
 button:hover {
-    background: linear-gradient(90deg, #34A853, #FBBC05);
+    background: linear-gradient(90deg, #6699FF, #9966CC);
 }
 
 #result {
