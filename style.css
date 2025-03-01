@@ -4,7 +4,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: url('C:\Users\justi\PycharmProjects\CheckinHTF\image.png'); /* Background Image */
+    background: url('image.png'); /* Background Image */
     background-size: cover; /* Ensure it covers the whole screen */
     color: white;
 }
