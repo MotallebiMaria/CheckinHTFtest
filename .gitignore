@@ -1,3 +1,4 @@
-node_modules/
 .env
-googleServiceAccountKey.json
+node_modules
+emails.json
+public/bundle.js

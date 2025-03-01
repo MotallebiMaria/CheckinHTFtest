@@ -1,38 +1,26 @@
-async function fetchRegisteredEmails() {
-    try {
-        const response = await fetch("http://localhost:3000/getRegisteredEmails");
-        if (!response.ok) throw new Error("Failed to fetch data");
-        const data = await response.json();
-        return data.registeredEmails;
-    } catch (error) {
-        console.error("Error fetching registered emails:", error);
-        return [];
-    }
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set, onValue } from "firebase/database";
+
+const firebaseConfig = {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+};
+
+// initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+function sanitizeEmail(email) {
+    return email.replace(/[.#$\[\]]/g, "_");
 }
 
-async function markCheckedInEmail(email) {
-    try {
-        const response = await fetch("http://localhost:3000/markCheckedInEmail", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            console.log("Email marked as checked-in");
-        } else {
-            console.error("Failed to mark email:", data.error);
-        }
-    } catch (error) {
-        console.error("Error marking email:", error);
-    }
-}
-
-async function checkEmail() {
+window.checkEmail = async function () {
     const emailInput = document.getElementById("emailInput").value.trim();
     const result = document.getElementById("result");
 
@@ -43,38 +31,44 @@ async function checkEmail() {
     }
 
     try {
-        const registeredEmails = await fetchRegisteredEmails();
-        console.log("Got registered emails:", registeredEmails);
+        const sanitizedEmail = sanitizeEmail(emailInput.toLowerCase());
 
-        if (registeredEmails.includes(emailInput.toLowerCase())) {
-            // call backend
-            const response = await fetch("http://localhost:3000/markCheckedInEmail", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: emailInput.toLowerCase() }),
-            });
+        // check if email registered for workshop1
+        const registeredEmailsRef = ref(database, "registeredEmails/workshop1");
+        onValue(registeredEmailsRef, (snapshot) => {
+            const registeredEmails = snapshot.val() || [];
 
-            const data = await response.json();
-
-            if (data.success) {
-                result.textContent = "✅ Check-in successful!";
-                result.style.color = "green";
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
-            } else {
-                result.textContent = "⚠️ You have already checked in.";
-                result.style.color = "orange";
+            if (!registeredEmails.includes(sanitizedEmail)) {
+                result.textContent = "❌ Not Registered";
+                result.style.color = "red";
+                return;
             }
-        } else {
-            result.textContent = "❌ Not Registered";
-            result.style.color = "red";
-        }
+
+            // check if email already checked in
+            const checkedInEmailsRef = ref(database, "checkedInEmails/workshop1");
+            onValue(checkedInEmailsRef, (snapshot) => {
+                const checkedInEmails = snapshot.val() || [];
+
+                if (checkedInEmails.includes(sanitizedEmail)) {
+                    result.textContent = "⚠️ You have already checked in.";
+                    result.style.color = "orange";
+                } else {
+                    // add email to workshop1 checked-in
+                    const updatedCheckedInEmails = [...checkedInEmails, sanitizedEmail];
+                    set(ref(database, "checkedInEmails/workshop1"), updatedCheckedInEmails);
+                    result.textContent = "✅ Check-in successful!";
+                    result.style.color = "green";
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+            });
+        });
     } catch (error) {
         console.error("Error checking email:", error);
         result.textContent = "⚠️ An error occurred. Please try again.";
         result.style.color = "orange";
     }
-}
+};
