@@ -67,7 +67,8 @@ function getTorontoTime() {
         minute: "2-digit",
         second: "2-digit"
     });
-    return torontoTime.replace(",", "");
+    console.log("Toronto time:", torontoTime);
+    return torontoTime;
 }
 
 window.onload = checkDeviceStatus;
