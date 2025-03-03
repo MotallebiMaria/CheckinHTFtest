@@ -55,6 +55,21 @@ function checkDeviceStatus() {
     });
 }
 
+function getTorontoTime() {
+    const now = new Date();
+    const torontoTime = now.toLocaleString("en-CA", {
+        timeZone: "America/Toronto",
+        hour12: false,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+    return torontoTime.replace(",", "");
+}
+
 window.onload = checkDeviceStatus;
 
 window.checkEmail = async function () {
@@ -89,7 +104,8 @@ window.checkEmail = async function () {
             return;
         }
 
-        if (checkedInEmails.includes(sanitizedEmail)) {
+        const isEmailCheckedIn = checkedInEmails.some(entry => entry.email === sanitizedEmail);
+        if (isEmailCheckedIn) {
             result.textContent = "⚠️ Email already checked in";
             result.style.color = "orange";
             return;
@@ -98,11 +114,12 @@ window.checkEmail = async function () {
         // add device ID to workshop2 checked-in devices
         const deviceId = getDeviceId();
         const updatedCheckedInDevices = [...checkedInDevices, deviceId];
-        set(ref(database, "checkedInDevices/workshop2"), updatedCheckedInDevices);
+        await set(ref(database, "checkedInDevices/workshop2"), updatedCheckedInDevices);
 
-        // add email to workshop2 checked-in emails
-        const updatedCheckedInEmails = [...checkedInEmails, sanitizedEmail];
-        set(ref(database, "checkedInEmails/workshop2"), updatedCheckedInEmails);
+        // add email + timestamp to workshop2 checked-in emails
+        const timestamp = getTorontoTime();
+        const updatedCheckedInEmails = [...checkedInEmails, { email: sanitizedEmail, timestamp }];
+        await set(ref(database, "checkedInEmails/workshop2"), updatedCheckedInEmails);
 
         hideCheckinForm("✅ Check-in successful!", "green");
         confetti({
